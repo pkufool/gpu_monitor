@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="static/css/index.css">
+  <style>
+    .de_page {
+      padding: 20px 50px 0px 50px;
+    }
+    .el-table .warning-row {
+      background: #E6A23C;
+    }
+    .el-table .success-row {
+      background: #67C23A;
+    }
+    .el-table .danger-row {
+      background: #F56C6C;
+    }
+	</style>
+</head>
+<body>
+  <div id="app" class="de_page">
+    <el-table
+      style="width: 100%;margin-bottom: 20px;"
+      row-key="id"
+      border
+      default-expand-all
+      :data="tableData"
+      :span-method="arraySpanMethod"
+      :row-class-name="tableRowClassName"
+      :tree-props="{children: 'gpus', hasChildren: 'hasChildren'}">
+      <el-table-column
+        prop="index"
+        label="Server"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="Card"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        sortable
+        prop="memory_used"
+        label="Memory used (MB)">
+      </el-table-column>
+      <el-table-column
+        prop="memory_total"
+        label="Memory total (MB)">
+      </el-table-column>
+      <el-table-column
+        prop="utilization_gpu"
+        label="Utilization (%)">
+      </el-table-column>
+    </el-table>
+  </div>
+</body>
+  <script src="static/js/vue.js"></script>
+  <script src="static/js/index.js"></script>
+  <script src="static/js/axios.min.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: function() {
+        return {
+          tableData: [],
+        }
+      },
+      methods: {
+        arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+          if (row['gpus']) {
+            if (columnIndex === 0) {
+              return [1, 5]
+            } else {
+              return [0, 0]
+            }
+          }
+        },
+        tableRowClassName({row, rowIndex}) {
+          if (!row['gpus']) {
+            var rate = row['memory_used'] / row['memory_total'];
+            if (rate < 0.5)
+              return 'success-row';
+            if (rate < 0.75)
+              return 'warning-row';
+            return 'danger-row';
+          }
+        },
+        getStats() {
+          var that = this;
+          axios.get("/stats")
+            .then(function (response) {
+              that.tableData = [];
+              for (var i in response['data']['data']) {
+                var data = response['data']['data'][i];
+                data['index'] = data['server'] + "(" + data['ip'] + ")";
+                data['id'] = i;
+                for (var j in data['gpus']) {
+                  data['gpus'][j]['id'] = (i + 1) * 10 + j;
+                }
+                that.tableData.push(data)
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+      },
+      mounted: function() {
+        this.getStats();
+      }
+    })
+  </script>
+</html>

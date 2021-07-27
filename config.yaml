@@ -1,0 +1,9 @@
+servers:
+  -
+    name: train-one
+    user: kingway
+    ip: 127.0.0.1
+  -
+    name: train-two
+    user: kingway
+    ip: 127.0.0.1
