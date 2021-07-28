@@ -8,13 +8,13 @@
       padding: 20px 50px 0px 50px;
     }
     .el-table .warning-row {
-      background: #E6A23C;
+      background-color: rgba(230,162,60,0.5);
     }
     .el-table .success-row {
-      background: #67C23A;
+      background-color: rgba(103, 194, 58,0.5);
     }
     .el-table .danger-row {
-      background: #F56C6C;
+      background-color: rgba(245, 108, 108,0.5);
     }
 	</style>
 </head>
@@ -36,8 +36,7 @@
       </el-table-column>
       <el-table-column
         prop="name"
-        label="Card"
-        width="180">
+        label="Card">
       </el-table-column>
       <el-table-column
         sortable
@@ -79,9 +78,9 @@
         tableRowClassName({row, rowIndex}) {
           if (!row['gpus']) {
             var rate = row['memory_used'] / row['memory_total'];
-            if (rate < 0.5)
+            if (rate < 0.33)
               return 'success-row';
-            if (rate < 0.75)
+            if (rate < 0.67)
               return 'warning-row';
             return 'danger-row';
           }
