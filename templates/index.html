@@ -19,7 +19,19 @@
 	</style>
 </head>
 <body>
+  <div style="text-align: center; padding: 20px 0px 0px 0px; font-size: 20px"> GPU Monitor </div>
   <div id="app" class="de_page">
+    <div class="tag-group" style="padding: 0px 0px 20px 0px;" align="center">
+      <el-tag key="success" type="success" effect="dark">
+        [67% ~ 100%] free memory
+      </el-tag>
+      <el-tag key="warning" type="warning" effect="dark">
+        [34% ~ 66%] free memory
+      </el-tag>
+      <el-tag key="danger" type="danger" effect="dark">
+        [0% ~ 33%] free memory
+      </el-tag>
+    </div>
     <el-table
       style="width: 100%;margin-bottom: 20px;"
       row-key="id"
