@@ -10,14 +10,13 @@ import subprocess as sp
 import sys
 
 from flask import Flask, request, render_template
-import numpy as np
 import yaml
 
 app = Flask(__name__)
 pwd = os.path.dirname(__file__)
 
 servers = yaml.load(codecs.open(os.path.join(pwd, "./config.yaml"),
-                    encoding='utf-8'))
+                    encoding='utf-8'), Loader=yaml.FullLoader)
 num_process = min(len(servers), 10)
 
 
