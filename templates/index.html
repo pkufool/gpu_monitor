@@ -98,29 +98,40 @@
             return 'danger-row';
           }
         },
-        getStats() {
+        // get gpu stats from the given ip
+        getStats(index, ip) {
           var that = this;
-          axios.get("/stats")
+          axios.get("/stats?ip=" + ip).then(function (response) {
+            var data = response['data']['data'];
+            data['index'] = data['server'] + "(" + data['ip'] + ")";
+            data['id'] = index;
+            for (var j in data['gpus']) {
+              data['gpus'][j]['id'] = (index + 1) * 10 + j;
+            }
+            that.tableData.push(data)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        // get machines list and then call getStats() each async.
+        getMachines() {
+          var that = this;
+          axios.get("/machines")
             .then(function (response) {
+              machines = response['data'];
               that.tableData = [];
-              for (var i in response['data']['data']) {
-                var data = response['data']['data'][i];
-                data['index'] = data['server'] + "(" + data['ip'] + ")";
-                data['id'] = i;
-                for (var j in data['gpus']) {
-                  data['gpus'][j]['id'] = (i + 1) * 10 + j;
-                }
-                that.tableData.push(data)
+              for (var i in machines) {
+                that.getStats(i, machines[i]);
               }
-            })
-            .catch(function (error) {
+            }).catch(function (error) {
               console.log(error);
             });
         },
       },
       mounted: function() {
-        this.getStats();
-      }
+        this.getMachines();
+      },
     })
   </script>
 </html>

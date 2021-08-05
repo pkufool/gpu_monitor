@@ -4,7 +4,6 @@
 
 import codecs
 import json
-import multiprocessing as mp
 import os
 import subprocess as sp
 import sys
@@ -15,12 +14,14 @@ import yaml
 app = Flask(__name__)
 pwd = os.path.dirname(__file__)
 
-servers = yaml.load(codecs.open(os.path.join(pwd, "./config.yaml"),
-                    encoding='utf-8'), Loader=yaml.FullLoader)
-num_process = min(len(servers), 10)
+servers = {}
+config = yaml.load(codecs.open(os.path.join(pwd, "./config.yaml"),
+                               encoding='utf-8'), Loader=yaml.FullLoader)
+for it in config['servers']:
+    servers[it['ip']] = it
 
 
-def get_stats(server, result):
+def get_stats(server):
     user = server['user']
     ip = server['ip']
     name = server['name']
@@ -37,7 +38,7 @@ def get_stats(server, result):
                       'memory_used' : int(toks[2]),
                       'memory_total' : int(toks[3]),
                       'utilization_gpu' : int(toks[4])})
-    result.append({'server' : name, 'ip' : ip, 'gpus' : stats})
+    return {'server' : name, 'ip' : ip, 'gpus' : stats}
 
 
 @app.route('/', methods=['GET'])
@@ -45,14 +46,14 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/machines', methods=['GET'])
+def machines():
+    return json.dumps(list(servers.keys()), ensure_ascii=False)
+
+
 @app.route('/stats', methods=['GET'])
 def stats():
-    pool = mp.Pool(num_process)
-    mgr = mp.Manager()
-    stats = mgr.list()
-    for server in servers["servers"]:
-        pool.apply_async(get_stats, args=(server, stats))
-    pool.close()
-    pool.join() 
-    return json.dumps({"data" : list(stats)}, ensure_ascii=False)
+    ip = request.args.get("ip")
+    stats = get_stats(servers[ip])
+    return json.dumps({"data" : stats}, ensure_ascii=False)
 

@@ -1,2 +1,2 @@
 flask>=2.0.0
-pyyaml>=5.4.0
+pyyaml>=5.1.0
