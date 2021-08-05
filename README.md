@@ -59,7 +59,7 @@ servers:
   -
     name: server-two
     user: pkufool
-    ip: 127.0.0.1
+    ip: 127.0.0.2
 ```
 * Run the flask application (could change the listening port if you like)
 ```
@@ -67,7 +67,7 @@ bash ./run.sh
 ```
 Type http://ip:port on your browser, you should see the page similar to the screen shot above. 
 
-## Thanks to
+## Acknowledgement
 Flask: https://github.com/pallets/flask  
 Vue: https://github.com/vuejs/vue  
 Element UI: https://element.eleme.cn  
