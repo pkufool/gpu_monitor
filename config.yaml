@@ -6,4 +6,4 @@ servers:
   -
     name: train-two
     user: kingway
-    ip: 127.0.0.1
+    ip: 127.0.0.2
