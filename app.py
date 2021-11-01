@@ -48,6 +48,10 @@ def index():
 
 @app.route('/machines', methods=['GET'])
 def machines():
+    config = yaml.load(codecs.open(os.path.join(pwd, "./config.yaml"),
+                                   encoding='utf-8'), Loader=yaml.FullLoader)
+    for it in config['servers']:
+        servers[it['ip']] = it
     return json.dumps(list(servers.keys()), ensure_ascii=False)
 
 
